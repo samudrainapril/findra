@@ -1,8 +1,12 @@
-"use client"
+"use client";
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import CompanyDetailModal from '@/components/CompanyDetailModal';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const jobs = [
   {
@@ -13,7 +17,15 @@ const jobs = [
     salary: 'Rp15.000.000 - Rp20.000.000',
     jobType: 'WFH',
     logo: '/amazon.png',
-    description: 'Mengembangkan antarmuka pengguna e-commerce dengan React.',
+    description: `
+<p>Amazon adalah perusahaan teknologi global yang berfokus pada e-commerce, komputasi awan, digital streaming, dan kecerdasan buatan.</p>
+<p>Sejak didirikan oleh Jeff Bezos pada tahun 1994, Amazon telah berkembang menjadi salah satu perusahaan paling bernilai di dunia.</p>
+<p>Kami mengoperasikan platform perdagangan online terbesar dan jaringan logistik mutakhir yang menjangkau berbagai negara.</p>
+<p>Inovasi dan kepuasan pelanggan adalah inti dari misi kami dalam menyediakan pengalaman belanja yang cepat, aman, dan andal.</p>
+<p>Di Indonesia, Amazon terus memperluas kehadirannya melalui kolaborasi strategis dan perekrutan talenta teknologi terbaik.</p>
+<p>Kami percaya pada budaya kerja yang fleksibel, inklusif, dan berbasis data.</p>
+`,
+     images: ["/amazon1.jpg", "/amazon2.jpg", "/amazon3.jpg"]
   },
   {
     id: 2,
@@ -23,7 +35,11 @@ const jobs = [
     salary: 'Rp18.000.000 - Rp25.000.000',
     jobType: 'WFA',
     logo: '/apple.png',
-    description: 'Membangun aplikasi inovatif di ekosistem Apple.',
+    description: `Apple Inc. adalah pemimpin global dalam inovasi teknologi, terkenal dengan produk-produk seperti iPhone, iPad, Mac, dan sistem operasi eksklusif seperti iOS dan macOS. Didirikan oleh Steve Jobs, Steve Wozniak, dan Ronald Wayne, Apple telah mengubah cara dunia berinteraksi dengan teknologi.
+
+Kami fokus pada desain elegan, keamanan, dan pengalaman pengguna yang intuitif. Apple terus menjadi pionir dalam pengembangan perangkat keras, perangkat lunak, dan layanan digital seperti Apple Music dan iCloud.
+
+Sebagai bagian dari tim global Apple, Anda akan berkontribusi dalam menciptakan solusi yang memengaruhi kehidupan jutaan orang, sambil bekerja di lingkungan yang menghargai kreativitas dan keunggulan.` 
   },
   {
     id: 3,
@@ -33,7 +49,11 @@ const jobs = [
     salary: 'Rp10.000.000 - Rp15.000.000',
     jobType: 'WFO',
     logo: '/bankjago.png',
-    description: 'Menganalisis data dan tren finansial nasabah.',
+    description: `Bank Jago adalah bank berbasis teknologi yang mengusung konsep digital banking untuk memberikan kemudahan akses layanan keuangan kepada seluruh masyarakat Indonesia. Kami percaya bahwa teknologi dapat menciptakan pengalaman perbankan yang lebih personal dan transparan.
+
+Sebagai bagian dari ekosistem digital, Bank Jago terus berinovasi dalam mengembangkan fitur-fitur finansial yang dapat disesuaikan dengan kebutuhan pengguna. Fokus kami adalah pada kolaborasi dan integrasi, bukan hanya layanan perbankan konvensional.
+
+Dengan semangat agile dan budaya kerja modern, kami membuka peluang bagi talenta berbakat untuk tumbuh bersama dan menciptakan dampak nyata dalam kehidupan finansial masyarakat.` 
   },
   {
     id: 4,
@@ -43,7 +63,11 @@ const jobs = [
     salary: 'Rp12.000.000 - Rp18.000.000',
     jobType: 'WFO',
     logo: '/bi.png',
-    description: 'Melakukan audit dan pengawasan lembaga keuangan.',
+    description: `Bank Indonesia adalah bank sentral Republik Indonesia yang memiliki mandat utama menjaga kestabilan nilai rupiah. Dalam menjalankan fungsinya, Bank Indonesia fokus pada kebijakan moneter, sistem pembayaran, dan stabilitas sistem keuangan nasional.
+
+Sebagai institusi yang independen dan kredibel, kami berperan penting dalam mendorong pertumbuhan ekonomi yang inklusif dan berkelanjutan. Melalui riset, pengawasan, dan inovasi teknologi keuangan, BI berkomitmen menjaga integritas sistem ekonomi.
+
+Kami mencari individu berintegritas tinggi yang siap berkontribusi dalam menjaga stabilitas keuangan nasional, sambil menghadapi tantangan dan dinamika ekonomi global secara adaptif dan profesional.` 
   },
   {
     id: 5,
@@ -136,74 +160,203 @@ const jobs = [
     description: 'Membangun sistem layanan telekomunikasi nasional.',
   },
 ];
-
 const jobTypes = ['Semua', 'WFH', 'WFO', 'WFA'];
+const locations = ['Jakarta', 'Remote', 'Yogyakarta', 'Surabaya', 'Bandung', 'Semarang', 'Makassar'];
+
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  jobType: string;
+  logo: string;
+  description: string;
+}
+
+function Header() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  return (
+    <header className="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+        <Link href="/" className="text-2xl font-extrabold text-indigo-600 tracking-tight">
+          Findra.
+        </Link>
+        <nav className="space-x-6 text-sm font-medium relative">
+          <Link href="/" className="text-gray-600 hover:text-indigo-600">Beranda</Link>
+          <Link href="/jobs" className="text-gray-600 hover:text-indigo-600">Lowongan</Link>
+          <Link href="/history" className="text-gray-600 hover:text-indigo-600">Riwayat</Link>
+
+          {/* Dropdown Masuk */}
+          <div className="inline-block relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="text-gray-600 hover:text-indigo-600 focus:outline-none"
+            >
+              Masuk
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md z-50">
+                <Link
+                  href="/login?role=jobseeker"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Pelamar
+                </Link>
+                <Link
+                  href="/login?role=company"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Perusahaan
+                </Link>
+              </div>
+            )}
+          </div>
+        </nav>
+      </div>
+    </header>
+  );
+}
 
 export default function HomePage() {
   const [selectedType, setSelectedType] = useState('Semua');
+  const [searchLocation, setSearchLocation] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
-  const filteredJobs = selectedType === 'Semua' ? jobs : jobs.filter((job) => job.jobType === selectedType);
+  const filteredJobs = jobs.filter((job) => {
+    const matchType = selectedType === 'Semua' || job.jobType === selectedType;
+    const matchLocation = !searchLocation || job.location.toLowerCase().includes(searchLocation.toLowerCase());
+    const matchSearch =
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchType && matchLocation && matchSearch;
+  });
 
   return (
-    <main className="min-h-screen bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 text-gray-800">
-      {/* ✅ Header */}
-      <header className="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
-          <Link href="/" className="text-2xl font-extrabold text-indigo-600 tracking-tight">
-            Findra
-          </Link>
-          <nav className="space-x-6 font-medium text-gray-700">
-            <Link href="/" className="hover:text-indigo-500 transition">Beranda</Link>
-            <Link href="/jobs" className="hover:text-indigo-500 transition">Lowongan</Link>
-            <Link href="/riwayat" className="hover:text-indigo-500 transition">Riwayat</Link>
-            <Link href="#" className="hover:text-indigo-500 transition">Profil</Link>
-          </nav>
-        </div>
-      </header>
+    <>
+      <main className="min-h-screen bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 text-gray-800">
+        <Header />
 
-      {/* Section utama & filter */}
-      <section className="text-center max-w-4xl mx-auto py-12 px-4">
-        <h2 className="text-4xl font-extrabold text-indigo-700 mb-4">Temukan Pekerjaan Impianmu</h2>
-        <p className="text-lg text-gray-600 mb-6">
-          Pilih berdasarkan jenis kerja yang sesuai dan mulailah kariermu hari ini!
-        </p>
+        {/* Filter Section */}
+        <section className="max-w-6xl mx-auto px-6 py-10">
+          <h2 className="text-3xl font-bold text-center text-indigo-700 mb-8">Cari Pekerjaan Anda Sekarang!</h2>
 
-        <div className="flex justify-center gap-4 flex-wrap">
-          {jobTypes.map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedType(type)}
-              className={`px-4 py-2 rounded-full border transition text-sm font-medium ${selectedType === type ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border-indigo-600'}`}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Job Card List */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-6 pb-20">
-        {filteredJobs.map((job) => (
-          <div
-            key={job.id}
-            className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 border border-gray-100 cursor-pointer"
-          >
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 relative mr-4">
-                <Image src={job.logo} alt={job.company} layout="fill" objectFit="contain" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-indigo-700">{job.title}</h3>
-                <p className="text-sm text-gray-500">{job.company}</p>
-              </div>
-            </div>
-            <p className="text-gray-700 text-sm mb-2">{job.description}</p>
-            <p className="text-gray-500 text-sm"> {job.location}</p>
-            <p className="text-gray-500 text-sm"> {job.salary}</p>
-            <p className="text-gray-500 text-sm"> {job.jobType}</p>
+          {/* Search Inputs */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Cari pekerjaan atau perusahaan..."
+              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Masukkan kota atau wilayah..."
+              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={searchLocation}
+              onChange={(e) => setSearchLocation(e.target.value)}
+            />
           </div>
-        ))}
-      </section>
-    </main>
+
+          {/* Job Type Filter */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {jobTypes.map((type) => (
+              <button
+                key={type}
+                className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
+                  selectedType === type
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                }`}
+                onClick={() => setSelectedType(type)}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+
+          {/* Job Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredJobs.map((job) => (
+              <div
+                key={job.id}
+                onClick={() => setSelectedJob(job)}
+                className="cursor-pointer bg-white p-4 rounded-lg shadow hover:shadow-md transition duration-300"
+              >
+                <div className="flex items-center space-x-4 mb-3">
+                  <div className="w-12 h-12 relative">
+                    <Image src={job.logo} alt={job.company} layout="fill" objectFit="contain" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-indigo-600">{job.title}</h3>
+                    <p className="text-sm text-gray-500">{job.company}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600">{job.location}</p>
+                <p className="text-sm text-gray-500">{job.salary}</p>
+                <span className="inline-block mt-2 text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded">
+                  {job.jobType}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {/* Job Detail Modal */}
+{selectedJob && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-start justify-center z-50 pt-10 overflow-auto">
+    <div className="bg-white rounded-xl w-[90%] max-w-4xl p-8 shadow-lg relative max-h-[90vh] overflow-auto">
+      <button
+        onClick={() => setSelectedJob(null)}
+        className="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl"
+      >
+        &times;
+      </button>
+      <div className="flex items-center mb-6">
+        <div className="w-16 h-16 relative mr-4">
+          <Image src={selectedJob.logo} alt={selectedJob.company} layout="fill" objectFit="contain" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-indigo-700">{selectedJob.title}</h3>
+          <p className="text-sm text-gray-500">{selectedJob.company}</p>
+        </div>
+      </div>
+
+{/* Dynamic Slider */}
+{selectedJob.images && selectedJob.images.length > 0 && (
+  <div className="mb-6">
+    <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
+      {selectedJob.images.map((src, idx) => (
+        <div key={idx}>
+          <img src={src} alt={`Galeri ${idx + 1}`} className="rounded-md w-full h-[500px] object-cover" />
+        </div>
+      ))}
+    </Slider>
+  </div>
+)}
+
+
+      <div
+        className="prose max-w-none text-gray-700 mb-4"
+        dangerouslySetInnerHTML={{ __html: selectedJob.description }}
+      />
+
+      <ul className="text-sm text-gray-600 mb-4 space-y-1">
+        <li><strong>Lokasi:</strong> {selectedJob.location}</li>
+        <li><strong>Gaji:</strong> {selectedJob.salary}</li>
+        <li><strong>Tipe Kerja:</strong> {selectedJob.jobType}</li>
+      </ul>
+      <Link href="/apply" className="block text-center bg-indigo-600 text-white py-2 rounded-md font-medium hover:bg-indigo-700 transition">
+        Lamar Sekarang!
+      </Link>
+    </div>
+  </div>
+)}
+
+    </>
   );
 }
