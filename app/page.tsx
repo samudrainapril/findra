@@ -19,14 +19,14 @@ export default function Home() {
         </p>
 
         <div className="flex justify-center gap-4 flex-wrap">
-          <Link href="/jobs">
+          <Link href="/login?role=jobseeker">
             <span className="px-6 py-3 rounded-full font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition cursor-pointer shadow-md">
               Jelajahi Lowongan
             </span>
           </Link>
-          <Link href="/jobs">
+          <Link href="/login?role=company">
             <span className="px-6 py-3 rounded-full font-semibold bg-white border border-indigo-600 text-indigo-600 hover:bg-indigo-50 transition cursor-pointer shadow-sm">
-              Daftarkan Diri Anda
+              Unggah Pekerjaan
             </span>
           </Link>
         </div>
